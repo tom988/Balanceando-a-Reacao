@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balanceando a Reação - Protótipo</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 2rem; background: #f9f9f9; }
+    h1 { color: #2c3e50; }
+    #game { margin-top: 2rem; }
+    .reaction { font-size: 1.5rem; margin: 1rem 0; }
+    input { width: 50px; text-align: center; font-size: 1.2rem; }
+    button { margin: 0.5rem; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; }
+    #feedback { margin-top: 1rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Balanceando a Reação</h1>
+  <div id="game">
+    <div class="reaction" id="reaction"></div>
+    <div id="inputs"></div>
+    <button onclick="checkBalance()">Verificar</button>
+    <button onclick="nextReaction()">Próxima</button>
+    <div id="feedback"></div>
+  </div>
+  <script>
+    const reactions = [
+      { equation: ["H2 + O2 -> H2O"], coeffs: [2,1,2] },
+      { equation: ["Na + Cl2 -> NaCl"], coeffs: [2,1,2] },
+      { equation: ["C3H8 + O2 -> CO2 + H2O"], coeffs: [1,5,3,4] }
+    ];
+    let current = 0;
+    function renderReaction(){
+      document.getElementById("reaction").innerText = reactions[current].equation[0];
+      const inputsDiv = document.getElementById("inputs");
+      inputsDiv.innerHTML = "";
+      const numInputs = reactions[current].coeffs.length;
+      for(let i=0;i<numInputs;i++){
+        const input = document.createElement("input");
+        input.type = "number";
+        input.min = "1";
+        inputsDiv.appendChild(input);
+      }
+    }
+    function checkBalance(){
+      const inputs = document.querySelectorAll("#inputs input");
+      const values = Array.from(inputs).map(i=>parseInt(i.value)||0);
+      const correct = reactions[current].coeffs;
+      let isCorrect = values.length === correct.length && values.every((v,i)=>v===correct[i]);
+      document.getElementById("feedback").innerText = isCorrect ? "Correto! 🎉" : "Ainda não está balanceada...";
+    }
+    function nextReaction(){
+      current = (current+1) % reactions.length;
+      document.getElementById("feedback").innerText = "";
+      renderReaction();
+    }
+    renderReaction();
+  </script>
+</body>
+</html>
